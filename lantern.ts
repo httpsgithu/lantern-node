@@ -29,9 +29,11 @@ server.on('connect', function(req, clientSocket, head) {
   serverSocket.on('error', function(error) {
     console.log('Unable to connect to ' + serverUrl.hostname + ':' + serverUrl.port, error);
     clientSocket.write('HTTP/1.1 502 Bad Gateway\r\n' + 
-                       'Proxy-agent: Lantenr\r\n' 
+                       'Proxy-agent: Lantenr\r\n' +
                        '\r\n');
   });
 });
 
-server.listen(8080);
+server.listen(8080, '127.0.0.1', function() {
+  console.log('Proxy listening on port 8080');
+});

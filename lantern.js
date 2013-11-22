@@ -10,14 +10,17 @@ var server = bouncy(function (req, res, bounce) {
 server.on('connect', function (req, clientSocket, head) {
     var serverUrl = url.parse('http://' + req.url);
     var serverSocket = net.connect(serverUrl.port, serverUrl.hostname, function () {
-        clientSocket.write('HTTP/1.1 200 Connection Established\r\n' + 'Proxy-agent: Node-Proxy\r\n' + '\r\n');
+        clientSocket.write('HTTP/1.1 200 Connection Established\r\n' + 'Proxy-agent: Lantern\r\n' + '\r\n');
         serverSocket.write(head);
         serverSocket.pipe(clientSocket);
         clientSocket.pipe(serverSocket);
     });
     serverSocket.on('error', function (error) {
-        console.log("Unable to connect", error, serverUrl);
+        console.log('Unable to connect to ' + serverUrl.hostname + ':' + serverUrl.port, error);
+        clientSocket.write('HTTP/1.1 502 Bad Gateway\r\n' + 'Proxy-agent: Lantenr\r\n' + '\r\n');
     });
 });
 
-server.listen(8080);
+server.listen(8080, '127.0.0.1', function () {
+    console.log('Proxy listening on port 8080');
+});
