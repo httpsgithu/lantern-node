@@ -1,0 +1,28 @@
+{
+  "name": "lantern",
+  "version": "0.1.0",
+  "author": "Brave New Software",
+  "license": "Apache",
+  "description": "The Lantern Peer to Peer Proxy",
+  "main": "webtail-server.js",
+  "bin": {
+    "lantern": "node ./lantern.js"
+  },
+  "repository": "",
+  "keywords": [
+    "P2P",
+    "proxy",
+    "http"
+  ],
+  "dependencies": {
+    "optimist": "0.6.0",
+    "pem": "1.2.2",
+    "deferred": "0.6.6",
+    "lodash": "2.2.1",
+    "mkdirp": "0.3.5"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "readmeFilename": "README.md"
+}

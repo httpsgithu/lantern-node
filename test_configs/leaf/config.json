@@ -1,0 +1,7 @@
+{
+  "sponsor": {
+    "ip": "127.0.0.1",
+    "port": 16353
+  },
+  "controlChannelPort": 16354
+}
