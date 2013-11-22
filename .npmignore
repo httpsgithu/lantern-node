@@ -1,5 +1,13 @@
 *.pem
 *.csr
 *.tar.gz
+*.tgz
 *.ts
 README.md
+readme.markdown
+.git/
+bench/
+benchmark/
+example/
+examples/
+test/

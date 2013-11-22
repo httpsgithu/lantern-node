@@ -1,3 +1,5 @@
 *.pem
 *.csr
 *.tar.gz
+*.tgz
+
