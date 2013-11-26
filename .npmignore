@@ -11,3 +11,4 @@ benchmark/
 example/
 examples/
 test/
+node_modules/ffi/deps/

@@ -1,26 +1,12 @@
-/// <reference path="typedefs/node.d.ts" />
-var https = require('https'), keys = require('./modules/keys'), controlChannel = require('./modules/controlchannel'), bouncy = require('bouncy'), net = require('net'), http = require('http'), url = require('url');
+/// <reference path='d.ts/DefinitelyTyped/node/node.d.ts' />
+/// <reference path='typedefs/deferred.d.ts' />
+// Node imports
+var https = require('https');
 
-keys.init().then(controlChannel.start).done();
+// TypeScript imports
+var ControlChannel = require("./modules/ControlChannel");
+var Keys = require("./modules/Keys");
+var Proxy = require("./modules/Proxy");
 
-var server = bouncy(function (req, res, bounce) {
-    bounce(req.url);
-});
+Keys.instance.init().then(ControlChannel.instance.start).then(new Proxy().start(8080, '127.0.0.1')).done();
 
-server.on('connect', function (req, clientSocket, head) {
-    var serverUrl = url.parse('http://' + req.url);
-    var serverSocket = net.connect(serverUrl.port, serverUrl.hostname, function () {
-        clientSocket.write('HTTP/1.1 200 Connection Established\r\n' + 'Proxy-agent: Lantern\r\n' + '\r\n');
-        serverSocket.write(head);
-        serverSocket.pipe(clientSocket);
-        clientSocket.pipe(serverSocket);
-    });
-    serverSocket.on('error', function (error) {
-        console.log('Unable to connect to ' + serverUrl.hostname + ':' + serverUrl.port, error);
-        clientSocket.write('HTTP/1.1 502 Bad Gateway\r\n' + 'Proxy-agent: Lantenr\r\n' + '\r\n');
-    });
-});
-
-server.listen(8080, '127.0.0.1', function () {
-    console.log('Proxy listening on port 8080');
-});

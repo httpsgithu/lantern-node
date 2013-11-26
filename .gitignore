@@ -2,4 +2,4 @@
 *.csr
 *.tar.gz
 *.tgz
-
+modules/*.js
