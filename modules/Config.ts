@@ -9,13 +9,14 @@ var _            = require('lodash'),
     mkdirp       = require('mkdirp');
 
 export interface SponsorAddress {
-  ip: string
-  port: Number 
+  ip: string;
+  port: Number; 
 }
 
 export interface ConfigData {
-  sponsor: SponsorAddress
-  controlChannelPort: Number
+  sponsor: SponsorAddress;
+  controlChannelPort: Number;
+  localProxyPort: Number;
 }
 
 /**
@@ -36,7 +37,8 @@ export class Config {
   
   private _configData:ConfigData = {
     sponsor: null,
-    controlChannelPort:null 
+    controlChannelPort: 16353,
+    localProxyPort: 8080 
   };
   
   /**
@@ -59,9 +61,15 @@ export class Config {
    * The port on which we will listen for control channel connections from
    * peers.  Defaults to 16353.
    */
-  get controlChannelPort() { return this._configData.controlChannelPort || 16353; }
+  get controlChannelPort() { return this._configData.controlChannelPort; }
   
-  private constructor() {
+  /**
+   * The port on which the local proxy listens for local connections. 
+   * Defaults to 8080.
+   */
+  get localProxyPort() { return this._configData.localProxyPort; }
+  
+  constructor() {
     if (argv._.length === 1) {
       // Different configuration directory specified
       this._configDir = argv._[0];
@@ -70,6 +78,8 @@ export class Config {
         this._configDir = process.cwd() + '/' + this._configDir; 
       }
     }
+    
+    console.log('Using configDir', this._configDir);
     
     // Always make config directory just in case
     try {
@@ -82,6 +92,7 @@ export class Config {
     try {
       var configString = fs.readFileSync(this.configFile, {encoding: 'utf8'});
       _.merge(this._configData, JSON.parse(configString));
+      console.log('Loaded config from: ', this.configFile);
     } catch(error) {
       console.error('Unable to read config from: ' + this.configFile + '   using default instead', error);
       this._save();

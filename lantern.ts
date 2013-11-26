@@ -8,9 +8,14 @@ var https                         = require('https');
 import ControlChannel = require('modules/ControlChannel');
 import Keys           = require('modules/Keys');
 import Proxy          = require('modules/Proxy');
+import Config         = require('modules/Config');
 
-Keys.instance.init()
-             .then(ControlChannel.instance.start)
-             .then(new Proxy().start(8080, '127.0.0.1'))
-             .done();
+var keys = Keys.instance;
+var controlChannel = ControlChannel.instance;
+var config = Config.instance;
 
+keys.init()
+    .then(controlChannel.start.bind(controlChannel))
+    .then(controlChannel.requestAuthentication.bind(controlChannel))
+    .then(new Proxy().start(config.localProxyPort, '127.0.0.1'))
+    .done();

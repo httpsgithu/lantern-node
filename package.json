@@ -21,7 +21,8 @@
     "lodash": "2.2.1",
     "mkdirp": "0.3.5",
     "bouncy": "3.2.1",
-    "socket.io": "0.9.16"
+    "socket.io": "0.9.16",
+    "node-forge": "0.2.18"
   },
   "engines": {
     "node": "0.10.x"
