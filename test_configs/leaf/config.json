@@ -1,8 +1,8 @@
 {
   "sponsor": {
     "ip": "127.0.0.1",
-    "port": 16353
+    "port": 16300
   },
-  "controlChannelPort": 16354,
-  "localProxyPort": 8081
+  "controlChannelPort": 16400,
+  "localProxyPort": 9000
 }

@@ -1,1 +1,4 @@
-{}
+{
+  "controlChannelPort": 16300,
+  "localProxyPort": 8000
+}

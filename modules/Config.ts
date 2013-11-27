@@ -37,37 +37,37 @@ export class Config {
   
   private _configData:ConfigData = {
     sponsor: null,
-    controlChannelPort: 16353,
-    localProxyPort: 8080 
+    controlChannelPort: 16300,
+    localProxyPort: 8000 
   };
   
   /**
    * Location where we store our configurations.
    */
-  get configDir() { return this._configDir; }
+  get configDir():string { return this._configDir; }
   
   /**
    * Path to configuration file.
    */
-  get configFile() { return this._configDir + '/config.json'; }
+  get configFile():string { return this._configDir + '/config.json'; }
   
   /**
    * The address of the Lantern server that's sponsoring us (connecting us to
    * the rest of the Lantern network).  By default, this is null.
    */
-  get sponsor() { return this._configData.sponsor; }
+  get sponsor():SponsorAddress { return this._configData.sponsor; }
   
   /**
    * The port on which we will listen for control channel connections from
    * peers.  Defaults to 16353.
    */
-  get controlChannelPort() { return this._configData.controlChannelPort; }
+  get controlChannelPort():Number { return this._configData.controlChannelPort; }
   
   /**
    * The port on which the local proxy listens for local connections. 
    * Defaults to 8080.
    */
-  get localProxyPort() { return this._configData.localProxyPort; }
+  get localProxyPort():Number { return this._configData.localProxyPort; }
   
   constructor() {
     if (argv._.length === 1) {

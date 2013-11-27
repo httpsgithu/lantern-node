@@ -83,6 +83,13 @@ export class Keys {
     return result.promise;
   }
   
+  sign(cert:string):Promise {
+    var certificate = pki.certificateFromPem(cert);
+    var privateKey = pki.privateKeyFromPem(this.privateKey);
+    certificate.sign(privateKey);
+    return pki.certificateToPem(certificate);   
+  }
+  
   private _readKeyData():Promise {
     var result = deferred();
     

@@ -27,8 +27,14 @@ export class ControlChannel {
    * @returns a Promise for finding out when starting has finished
    */
   start():Promise {
-    var port = config.controlChannelPort;
+    return this._startAuthenticationServer()
+      .then(this._startControlChannelServer.bind(this));
+  }
+  
+  _startAuthenticationServer():Promise {
     var result = deferred();
+    
+    var port = config.controlChannelPort + 1;
     var serverOptions = {
       key: keys.privateKey,
       cert: keys.certificate
@@ -43,10 +49,39 @@ export class ControlChannel {
       if (err) {
         result.reject('Unable to start control channel server: ' +  err);
       } else {
-        console.log('Control channel listening on port', port);
+        console.log('Listening for authentication requests on port', port);
         result.resolve();
       }
     });
+    
+    return result.promise;
+  }
+  
+  _startControlChannelServer():Promise {
+    var result = deferred();
+    
+    var port = config.controlChannelPort;
+    var serverOptions = {
+      key: keys.privateKey,
+      cert: keys.certificate,
+      ca: [keys.certificate],
+      requestCert: true,
+      rejectUnauthorized: true
+    };
+    https.createServer(serverOptions, (req, res) => {
+      var path = this._pathForRequest(req);
+      console.log(req.connection.getPeerCertificate());
+      console.log(req.secure);
+      console.log(req.client.authorized);
+    }).listen(port, function(err) {
+      if (err) {
+        result.reject('Unable to start control channel server: ' +  err);
+      } else {
+        console.log('Listening for control channel traffic on port', port);
+        result.resolve();
+      }
+    });
+    
     return result.promise;
   }
   
@@ -60,7 +95,7 @@ export class ControlChannel {
       var options = {
         // TODO: actually check the server's certificate against our trusted ones
         host: sponsor.ip,
-        port: sponsor.port,
+        port: sponsor.port + 1,
         path: '/authenticate',
         method: 'POST',
         key: keys.privateKey,
@@ -69,8 +104,33 @@ export class ControlChannel {
         rejectUnauthorized: true
       };
       var req = https.request(options, function(res) {
-        console.log('Finished');
+        var cert = '';
+        res.on('data', function (data) {
+            cert += data;
+        });
+        res.on('end', function () {
+            console.log('Got signed certificate');
+            var newOptions = {
+              // TODO: actually check the server's certificate against our trusted ones
+              host: sponsor.ip,
+              port: sponsor.port,
+              path: '/',
+              method: 'GET',
+              key: keys.privateKey,
+              cert: cert,
+              ca: keys.trustedCertificates,
+              rejectUnauthorized: true
+            };
+            var newReq = https.request(newOptions, function(res) {
+              
+            });
+            newReq.on('error', function(error) {
+              console.log(error);
+            });
+            newReq.end();
+        });
       });
+      req.write(keys.certificate);
       req.end();
     }
     return result.promise;
@@ -78,11 +138,15 @@ export class ControlChannel {
   
   private _authenticate(req, res):Promise {
     var result = deferred();
-    //console.log(req.connection.getPeerCertificate());
-    console.log(req.secure);
-    console.log(req.client.authorized);
+    var cert = '';
+    req.on('data', function (data) {
+        cert += data;
+    });
+    req.on('end', function () {
+        res.write(keys.sign(cert));
+        res.end();
+    });
     result.resolve();
-    res.end();
     return result;
   }
   
