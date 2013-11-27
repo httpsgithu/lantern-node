@@ -46,14 +46,15 @@ export class Keys {
   get trustedCertificates() { return this._trustedCertificates; }
   
   constructor() {
-    var keysDir = config.configDir + '/keys/';
-    this._privateKeyFile = keysDir + 'privatekey.pem';
-    this._certificateFile = keysDir + 'certificate.pem';
-    this._trustedCertificatesPath = keysDir + 'trusted/';
+    var keysDir = config.configDir + '/keys';
+    this._privateKeyFile = keysDir + '/own/privatekey.pem';
+    this._certificateFile = keysDir + '/own/certificate.pem';
+    this._trustedCertificatesPath = keysDir + '/trusted/';
     
     // Always make the keysDir
     try {
-      mkdirp.sync(keysDir);
+      mkdirp.sync(keysDir + "/own");
+      mkdirp.sync(keysDir + "/trusted");
     } catch (error) {
     }
   }

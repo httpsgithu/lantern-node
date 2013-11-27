@@ -31,9 +31,7 @@ export class ControlChannel {
     var result = deferred();
     var serverOptions = {
       key: keys.privateKey,
-      cert: keys.certificate,
-      requestCert: true,
-      rejectUnauthorized: false
+      cert: keys.certificate
     };
     https.createServer(serverOptions, (req, res) => {
       var path = this._pathForRequest(req);
